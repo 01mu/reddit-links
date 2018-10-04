@@ -1,5 +1,5 @@
 # reddit-links
-Pulls a list of domains featured on a given subreddit.
+Pulls a list of domains featured on a given subreddit. Returns score total, score percentage, and domain frequency.
 ## Usage
 Input (driver.php):
 ```
