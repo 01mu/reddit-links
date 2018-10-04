@@ -2,7 +2,7 @@
 Pulls a list of domains featured on a given subreddit. Returns score total, score percentage, and domain frequency.
 
 
-`$limit` refers to the number of links returned per reddit API request.
+`$limit` refers to the number of links returned per reddit API request (max = 100).
 
 `$pag` refers to the number of API request pages parsed.
 
