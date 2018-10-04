@@ -1,7 +1,14 @@
 # reddit-links
-Pulls a list of domains featured on a given subreddit. Returns score total, score percentage, and domain frequency. `$limit` refers to the number of links returned per reddit API request. `$pag` refers to the number of API request pages parsed. `$sub` refers to a chosen subreddit. 
+Pulls a list of domains featured on a given subreddit. Returns score total, score percentage, and domain frequency.
+
+
+`$limit` refers to the number of links returned per reddit API request.
+
+`$pag` refers to the number of API request pages parsed.
+
+`$sub` refers to a chosen subreddit. 
 ## Usage
-Input (driver.php):
+Input (`driver.php`):
 ```
 <?php
 
