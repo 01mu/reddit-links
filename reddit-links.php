@@ -143,8 +143,8 @@ class reddit_links
         $reddit_url = new reddit_url();
 
         $reddit_url->url = $this->url_array[0]['url'];
-        $reddit_url->count_percentage = 100;
-        $reddit_url->score_percentage = 100;
+        $reddit_url->count_percentage = (1 / $this->url_total) * 100;
+        $reddit_url->score_percentage = (1 / $this->score_total) * 100;
         $reddit_url->count_total = 1;
         $reddit_url->score_total = $this->url_array[0]['score'];
 
