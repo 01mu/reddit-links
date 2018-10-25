@@ -9,7 +9,7 @@ Pulls a list of domains featured on a given subreddit. Returns score total, scor
 `$sub` refers to a chosen subreddit. 
 ## Usage
 Input (`driver.php`):
-```
+```php
 <?php
 
 include_once 'reddit-links.php';
