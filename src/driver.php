@@ -7,7 +7,7 @@
 include_once 'reddit-links.php';
 
 $sub = 'politics';
-$limit = 10;
+$limit = 50;
 $pag = 1;
 $sort = 'count';
 $type = 'domain';
