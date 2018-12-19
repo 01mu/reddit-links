@@ -1,165 +1,148 @@
 <?php
+/*
+ * reddit-links
+ * github.com/01mu
+ */
 
-class reddit_url
+class reddit_item
 {
     public $url;
+
     public $count_percentage;
     public $score_percentage;
+    public $comments_percentage;
+
     public $count_total;
     public $score_total;
+    public $comments_total;
 }
 
 class reddit_links
 {
-    private $url;
+    private $url_base;
     private $data;
     private $pages;
-    private $thread_total;
-    private $url_array;
-    private $arr;
-    private $url_total;
-    private $score_total;
 
-    public function reddit_links($sub, $limit, $pagination)
+    public $itm_array = array();
+    public $arr = array();
+
+    public $thread_total = 0;
+    public $unique_total = 0;
+    public $itm_total = 0;
+    public $score_total = 0;
+    public $comments_total = 0;
+
+    public function reddit_links($sub, $limit, $pag, $sort, $type)
     {
-        $this->url_array = array();
-        $this->arr = array();
-        $this->url_total = 0;
-        $this->score_total = 0;
-
         $this->url_base = 'https://www.reddit.com/r/' . $sub
             . '/hot/.json?limit=' . $limit;
 
-        $this->get_threads($pagination);
+        $this->get_threads($pag, $type);
         $this->struct();
+        $this->sort($sort);
     }
 
-    public function get_arr()
-    {
-        return $this->arr;
-    }
-
-    public function unique_url_total()
-    {
-        return count($this->arr);
-    }
-
-    public function url_total()
-    {
-        return $this->url_total;
-    }
-
-    public function score_total()
-    {
-        return $this->score_total;
-    }
-
-    public static function sort_cp($a, $b)
+    public static function sort_count($a, $b)
     {
         return $a->count_percentage < $b->count_percentage;
     }
 
-    public static function sort_sp($a, $b)
+    public static function sort_score($a, $b)
     {
         return $a->score_percentage < $b->score_percentage;
     }
 
-    public static function sort_ct($a, $b)
+    public static function sort_comments($a, $b)
     {
-        return $a->count_total < $b->count_total;
-    }
-
-    public static function sort_st($a, $b)
-    {
-        return $a->score_total < $b->score_total;
+        return $a->comments_percentage < $b->comments_percentage;
     }
 
     public function sort($type)
     {
         switch($type)
         {
-            case 'count_percentage':
-                usort($this->arr, array('reddit_links','sort_cp'));
+            case 'count':
+                usort($this->arr, array('reddit_links', 'sort_count'));
                 break;
-            case 'score_percentage':
-                usort($this->arr, array('reddit_links','sort_sp'));
+            case 'score':
+                usort($this->arr, array('reddit_links', 'sort_score'));
                 break;
-            case 'count_total':
-                usort($this->arr, array('reddit_links','sort_ct'));
+            case 'comments':
+                usort($this->arr, array('reddit_links', 'sort_comments'));
                 break;
-            case 'score_total':
-                usort($this->arr, array('reddit_links','sort_st'));
+            default:
+                usort($this->arr, array('reddit_links', 'sort_count'));
                 break;
-        }
-    }
-
-    public function display()
-    {
-        for($i = 0; $i < count($this->arr); $i++)
-        {
-            printf($this->arr[$i]->url . " "
-                . $this->arr[$i]->score_total . " "
-                . $this->arr[$i]->count_total . " "
-                . number_format($this->arr[$i]->score_percentage, 2) . " "
-                . number_format($this->arr[$i]->count_percentage, 2) . "\n");
-        }
-    }
-
-    private function check_exists($url, $sc)
-    {
-        $found = 0;
-
-        for($i = 0; $i < count($this->arr); $i++)
-        {
-            if(strcmp($this->arr[$i]->url, $url) == 0)
-            {
-                $this->arr[$i]->count_total++;
-                $this->arr[$i]->count_percentage = ($this->arr[$i]->count_total
-                    / $this->url_total) * 100;
-                $this->arr[$i]->score_total = $this->arr[$i]->score_total + $sc;
-                $this->arr[$i]->score_percentage = ($this->arr[$i]->score_total
-                    / $this->score_total) * 100;
-
-                $found = 1;
-            }
-        }
-
-        if(!$found)
-        {
-            $reddit_url = new reddit_url();
-
-            $reddit_url->url = $url;
-            $reddit_url->count_percentage = (1 / $this->url_total) * 100;
-            $reddit_url->score_percentage = (1 / $this->score_total) * 100;
-            $reddit_url->count_total = 1;
-            $reddit_url->score_total = $sc;
-
-            $this->arr[] = $reddit_url;
         }
     }
 
     private function struct()
     {
-        $reddit_url = new reddit_url();
+        $item = new reddit_item();
 
-        $reddit_url->url = $this->url_array[0]['url'];
-        $reddit_url->count_percentage = (1 / $this->url_total) * 100;
-        $reddit_url->score_percentage = (1 / $this->score_total) * 100;
-        $reddit_url->count_total = 1;
-        $reddit_url->score_total = $this->url_array[0]['score'];
+        $first = $this->itm_array[0]['itm'];
 
-        $this->arr[] = $reddit_url;
+        $item->url = $first;
 
-        for($i = 1; $i < count($this->url_array); $i++)
+        $item->count_percentage = (1 / $this->itm_total) * 100;
+        $item->score_percentage = (1 / $this->score_total) * 100;
+        $item->comments_percentage = (1 / $this->comments_total) * 100;
+
+        $item->count_total = 1;
+        $item->score_total = $this->itm_array[0]['score'];
+        $item->comments_total = $this->itm_array[0]['cmts'];
+
+        $this->arr[$first] = $item;
+
+        for($i = 1; $i < count($this->itm_array); $i++)
         {
-            $url = $this->url_array[$i]['url'];
-            $score = $this->url_array[$i]['score'];
+            $itm = $this->itm_array[$i]['itm'];
+            $score = $this->itm_array[$i]['score'];
+            $cmts = $this->itm_array[$i]['cmts'];
 
-            $this->check_exists($url, $score);
+            $this->add($itm, $score, $cmts);
+        }
+
+        $this->unique_total = count($this->arr);
+    }
+
+    private function add($itm, $score, $cmts)
+    {
+        if(isset($this->arr[$itm]))
+        {
+            $cnt = $this->arr[$itm]->count_total;
+            $cmt = $this->arr[$itm]->comments_total;
+            $st = $this->arr[$itm]->score_total;
+
+            $new_cmt = $cmt / $this->comments_total * 100;
+
+            $this->arr[$itm]->count_percentage = $cnt / $this->itm_total * 100;
+            $this->arr[$itm]->score_percentage = $st / $this->score_total * 100;
+            $this->arr[$itm]->comments_percentage = $new_cmt;
+
+            $this->arr[$itm]->count_total++;
+            $this->arr[$itm]->score_total = $st + $score;
+            $this->arr[$itm]->comment_total = $cmt + $cmts;
+        }
+        else
+        {
+            $item = new reddit_item();
+
+            $item->url = $itm;
+
+            $item->count_percentage = (1 / $this->itm_total) * 100;
+            $item->score_percentage = ($score / $this->score_total) * 100;
+            $item->comments_percentage = ($cmts / $this->comments_total) * 100;
+
+            $item->count_total = 1;
+            $item->score_total = $score;
+            $item->comment_total = $cmts;
+
+            $this->arr[$itm] = $item;
         }
     }
 
-    private function get_threads($pagination)
+    private function get_threads($pagination, $type)
     {
         $after = '';
 
@@ -175,14 +158,26 @@ class reddit_links
 
                 $title = $pg['title'];
                 $id = $pg['id'];
-                $url = $pg['domain'];
+
+                if(!strcmp($type, 'domain'))
+                {
+                    $itm = $pg['domain'];
+                }
+                else
+                {
+                    $itm = $pg['author'];
+                }
+
                 $score = $pg['score'];
-                //$comments = $pg['replies'];
+                $cmts = $pg['num_comments'];
 
-                $this->url_array[] = ['url' => $url, 'score' => $score];
+                $arr = ['itm' => $itm, 'score' => $score, 'cmts' => $cmts];
 
-                $this->url_total++;
+                $this->itm_array[] = $arr;
+
+                $this->itm_total++;
                 $this->score_total += $score;
+                $this->comments_total += $cmts;
             }
 
              $after = '&after=' . $this->pages['data']['after'];

@@ -1,29 +1,27 @@
 <?php
+/*
+ * reddit-links
+ * github.com/01mu
+ */
 
 include_once 'reddit-links.php';
 
 $sub = 'politics';
-$limit = 100;
+$limit = 10;
 $pag = 1;
+$sort = 'count';
+$type = 'domain';
 
-$pt = new reddit_links($sub, $limit, $pag);
+$reddit = new reddit_links($sub, $limit, $pag, $sort, $type);
 
-$pt->sort('score_percentage');
+$arr = $reddit->arr;
 
-$urls = $pt->get_arr();
-
-printf("Subreddit: " . $sub . "\nLimit: " . $limit . "\nPagination: " . $pag);
-printf("\n\nDomain | Count Total | Count %% | Score Total | Score %%\n\n");
-
-for($i = 0; $i < count($urls); $i++)
+foreach($arr as $itm)
 {
-    printf($urls[$i]->url . " "
-        . $urls[$i]->count_total . " "
-        . number_format($urls[$i]->count_percentage, 2) . " "
-        . $urls[$i]->score_total . " "
-        . number_format($urls[$i]->score_percentage, 2) . "\n");
+    printf($itm->url . ': ' . $itm->count_total . "\n");
 }
 
-printf("\n" . 'URL Total: ' . $pt->url_total() . "\n");
-printf('Unique Domain Total: ' . $pt->unique_url_total() . "\n");
-printf('Score Total: ' . $pt->score_total() . "\n");
+printf("\n" . 'Items Total: ' . $reddit->itm_total . "\n");
+printf('Unique Total: ' . $reddit->unique_total . "\n");
+printf('Score Total: ' . $reddit->score_total . "\n");
+printf('Comments Total: ' . $reddit->comments_total . "\n");
