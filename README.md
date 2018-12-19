@@ -1,12 +1,12 @@
 # reddit-links
 Pulls a list of domains featured on a given subreddit. Returns score total, score percentage, and domain frequency.
 ## Usage
-Return tje top 10 most popular domains ordered by `count` from reddit's /r/politics recent posts.
+Return the top 10 most popular domains ordered by `count` from reddit's /r/politics most recent posts.
 * `$sub`: A chosen subreddit.
 * `$limit`: The number of links returned per reddit API request (max = 100).
 * `$pag`: The number of API request pages parsed (max = 10).
 * `$sort`: Sort in descending order. Possible values are `count`, `score`, and `comments`.
-* `type`: Type of content to return. Possible values `domain` or `author`.
+* `type`: Type of content to return. Possible are values `domain` or `author`.
 ```php
 <?php
 include_once 'reddit-links.php';
