@@ -6,7 +6,7 @@ Return top 10 most popular domains ordered by `count` from reddit's /r/politics 
 * `$limit`: The number of links returned per reddit API request (max = 100).
 * `$pag`: The number of API request pages parsed (max = 10).
 * `$sort`: Sort in descending order. Possible values are `count`, `score`, and `comments`.
-* `type`: Type of content to return. Either `domain` or `author`.
+* `type`: Type of content to return. Possible values `domain` or `author`.
 ```php
 <?php
 include_once 'reddit-links.php';
